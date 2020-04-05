@@ -189,3 +189,33 @@ extension UIButton {
     }
 }
 ```
+
+#### Switch between NSDate Object and ISO-8601 format string.
+```Swift
+public extension NSDate {
+    public class func ISOStringFromDate(date: NSDate, locale: String = "en_US_POSIX", timezone: String = "UTC") -> String {
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.locale = NSLocale(localeIdentifier: locale)
+        dateFormatter.timeZone = NSTimeZone(abbreviation: timezone)
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
+        
+        /*
+        *  Append Z in lieu of putting into dateFormat.
+        *  This will prevent UTC Offset +0000 from displaying.
+        */
+        return dateFormatter.stringFromDate(date).stringByAppendingString("Z")
+    }
+    
+    public class func dateFromISOString(string: String, locale: String = "en_US_POSIX") -> NSDate? {
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.timeZone = NSTimeZone.localTimeZone()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        
+        return dateFormatter.dateFromString(string)
+    }
+    
+    public class func isoStringNow() -> String {
+        return NSDate.ISOStringFromDate(NSDate())
+    }
+}
+```
